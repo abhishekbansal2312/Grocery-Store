@@ -67,8 +67,34 @@ export default function ItemsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      const updatedItem = await response.json();
+
+      if (editIndex === -1) {
+        setItems((prevItems) => [...prevItems, updatedItem.item]);
+        setFilteredItems((prevFiltered) => [...prevFiltered, updatedItem.item]);
+      } else {
+        setItems((prevItems) =>
+          prevItems.map((item, index) =>
+            index === editIndex ? updatedItem.item : item
+          )
+        );
+        setFilteredItems((prevFiltered) =>
+          prevFiltered.map((item, index) =>
+            index === editIndex ? updatedItem.item : item
+          )
+        );
+      }
+
       setShowModal(false);
       setEditIndex(-1);
+      setFormFields({
+        name: "",
+        amount: "",
+        description: "",
+        quantity: 1,
+        category: "Electronics",
+        isActive: false,
+      });
     } catch (error) {
       console.error("Error adding/updating item:", error);
     }
