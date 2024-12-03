@@ -46,8 +46,9 @@ export default function ItemsPage() {
     getAllItems();
   }, []);
 
-  const handleFormSubmit = async (e, id) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const id = editIndex !== -1 ? items[editIndex]._id : null;
     const url =
       editIndex === -1
         ? `http://localhost:4100/api/items`
@@ -68,27 +69,27 @@ export default function ItemsPage() {
 
       setShowModal(false);
       setEditIndex(-1);
-      getAllItems();
     } catch (error) {
       console.error("Error adding/updating item:", error);
     }
   };
 
-  const handleEdit = (index, item) => {
-    setEditIndex(index);
+  const handleEdit = (idx, item) => {
+    setEditIndex(idx);
     setFormFields({
       name: item.name || "",
       amount: item.amount || 0,
       description: item.description || "",
       quantity: item.quantity || 1,
       category: item.category || "default",
-      isActive: item.isActive ?? true,
+      isActive: item.isActive ?? false,
     });
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (item) => {
     try {
+      const id = item._id;
       const response = await fetch(`http://localhost:4100/api/items/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -147,12 +148,7 @@ export default function ItemsPage() {
             <Form
               formFields={formFields}
               setFormFields={setFormFields}
-              handleSubmit={(e) =>
-                handleFormSubmit(
-                  e,
-                  editIndex >= 0 ? items[editIndex]._id : null
-                )
-              }
+              handleSubmit={(e) => handleFormSubmit(e)}
               onCancel={() => setShowModal(false)}
             />
           </Modal>

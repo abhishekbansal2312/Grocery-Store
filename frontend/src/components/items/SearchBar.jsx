@@ -2,7 +2,7 @@ import React from "react";
 
 export default function SearchBar({ onSearch }) {
   const handleInputChange = (event) => {
-    onSearch(event.target.value); // Pass the input value to the parent
+    onSearch(event.target.value);
   };
 
   return (

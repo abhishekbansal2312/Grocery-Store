@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
 export default function Login() {
+  const { isAuthenticated, setIsAuthenticated, darkMode, setDarkMode } =
+    useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +18,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!form.email || !form.password) {
-      setError("Please fill in all fields");
+      setError("Please fill in all fields.");
       return;
     }
 
@@ -28,30 +31,39 @@ export default function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify(form),
+        credentials: "include",
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        console.log("Authenticated successfully!");
+        setIsAuthenticated(true);
+        console.log("Login successful!");
         navigate("/items");
       } else {
-        setError("Login failed. Please try again.");
+        setError(data.message || "Login failed. Please try again.");
       }
-    } catch (error) {
-      setError("An error occurred while logging in. Please try again later.");
-      console.error("Login error:", error);
+    } catch (err) {
+      setError("An error occurred. Please try again later.");
+      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-800">
-          Login
-        </h2>
+    <div
+      className={`flex items-center justify-center min-h-screen ${
+        darkMode ? "bg-gray-800" : "bg-gray-100"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md p-8 space-y-6 rounded-lg shadow-md ${
+          darkMode ? "bg-gray-700 text-white" : "bg-white"
+        }`}
+      >
+        <h2 className="text-2xl font-semibold text-center">Login</h2>
         {error && <p className="text-sm text-red-600 text-center">{error}</p>}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
@@ -62,7 +74,11 @@ export default function Login() {
               onChange={handleInputChange}
               placeholder="Email"
               required
-              className="w-full px-4 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
+                darkMode
+                  ? "bg-gray-600 text-white border-gray-500 focus:ring-gray-300"
+                  : "bg-white text-gray-700 border-gray-300 focus:ring-blue-500"
+              }`}
             />
           </div>
           <div>
@@ -73,19 +89,46 @@ export default function Login() {
               onChange={handleInputChange}
               placeholder="Password"
               required
-              className="w-full px-4 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 ${
+                darkMode
+                  ? "bg-gray-600 text-white border-gray-500 focus:ring-gray-300"
+                  : "bg-white text-gray-700 border-gray-300 focus:ring-blue-500"
+              }`}
             />
           </div>
           <button
             type="submit"
-            disabled={loading || !form.email || !form.password}
-            className={`w-full py-2 text-white rounded-lg ${
+            disabled={loading}
+            className={`w-full py-2 rounded-lg flex justify-center items-center ${
               loading
                 ? "bg-blue-300 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-600"
-            }`}
+            } text-white`}
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? (
+              <svg
+                className="w-5 h-5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </div>

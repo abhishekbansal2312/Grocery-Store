@@ -49,7 +49,7 @@ const ItemsList = ({ items, handleEdit, handleDelete }) => {
                     </button>
 
                     <button
-                      onClick={() => handleDelete(idx, item._id)}
+                      onClick={() => handleDelete(item)}
                       aria-label="Delete Expense"
                       className="flex items-center justify-center bg-red-500 text-white p-2 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                     >

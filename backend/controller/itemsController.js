@@ -86,45 +86,38 @@ export const postItemsController = async (req, res) => {
 
 export const putItemsController = async (req, res) => {
   try {
-    const userId = getUserIdFromToken(req);
+    const userId = getUserIdFromToken(req); // Extract user ID from token
 
-    const { itemId } = req.params;
+    const itemId = req.params.id; // Get item ID from URL parameters
     const { name, amount, description, quantity, category, isActive } =
-      req.body;
+      req.body; // Extract fields from request body
 
+    // Validate the item ID
     if (!mongoose.isValidObjectId(itemId)) {
-      return res.status(400).json({ message: `Invalid item ID, ${itemId}` });
+      return res.status(400).json({ message: "Invalid item ID" });
     }
 
-    const fieldsToUpdate = {
-      name,
-      amount,
-      description,
-      quantity,
-      category,
-      isActive,
-    };
-    const updates = Object.entries(fieldsToUpdate).reduce(
-      (acc, [key, value]) => {
-        if (value !== undefined) acc[key] = value;
-        return acc;
-      },
-      {}
-    );
-
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: "No fields provided for update" });
-    }
-
+    // Check if the item exists and belongs to the current user
     const item = await Item.findById(itemId);
     if (!item) {
-      return res.status(404).json({ message: "Item not found", itemId });
+      return res.status(404).json({ message: "Item not found" });
     }
-
     if (item.user.toString() !== userId) {
       return res
         .status(403)
-        .json({ message: "Forbidden: You do not own this item" });
+        .json({ message: "You are not authorized to update this item" });
+    }
+
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (amount !== undefined) updates.amount = amount;
+    if (description !== undefined) updates.description = description;
+    if (quantity !== undefined) updates.quantity = quantity;
+    if (category !== undefined) updates.category = category;
+    if (isActive !== undefined) updates.isActive = isActive;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No fields provided for update" });
     }
 
     const updatedItem = await Item.findByIdAndUpdate(itemId, updates, {
@@ -137,10 +130,9 @@ export const putItemsController = async (req, res) => {
       item: updatedItem,
     });
   } catch (error) {
-    console.error("Error updating item:", error);
-    const statusCode = error.message.includes("Unauthorized") ? 401 : 500;
-    res.status(statusCode).json({
-      message: error.message || "Failed to update item",
+    console.error("Error updating item:", error.message);
+    res.status(500).json({
+      message: "Failed to update item",
       error: error.message,
     });
   }
@@ -149,7 +141,6 @@ export const putItemsController = async (req, res) => {
 export const deleteItemsController = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ message: "Invalid item ID" });
     }
