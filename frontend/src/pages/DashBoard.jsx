@@ -1,20 +1,24 @@
+import { useSideBar } from "../context/SideBarProvider";
 import SideBar from "../components/SideBar";
-import MainContent from "../components/MainContent";
+import DashBoardPage from "../components/dashboard/DashBoardPage";
 
-const DashBoard = () => {
+const Items = () => {
+  const { isSidebarCollapsed } = useSideBar();
+
   return (
-    <>
-      <div className="flex min-h-screen">
-        <div className="w-64 bg-gray-800 text-white">
-          <SideBar />
-        </div>
-
-        <div className="flex-1 p-6">
-          <MainContent />
-        </div>
+    <div className="flex min-h-screen">
+      <div
+        className={`transition-all text-white relative ${
+          isSidebarCollapsed ? "w-16" : "w-56"
+        }`}
+      >
+        <SideBar isCollapsed={isSidebarCollapsed} />
       </div>
-    </>
+      <div className="flex-1 p-6">
+        <DashBoardPage />
+      </div>
+    </div>
   );
 };
 
-export default DashBoard;
+export default Items;

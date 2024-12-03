@@ -4,7 +4,7 @@ import SideBar from "../components/SideBar";
 import ItemsPage from "../components/items/ItemsPage";
 
 const Items = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSideBar();
+  const { isSidebarCollapsed } = useSideBar();
 
   return (
     <div className="flex min-h-screen">
