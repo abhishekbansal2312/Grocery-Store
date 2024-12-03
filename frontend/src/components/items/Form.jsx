@@ -15,7 +15,7 @@ const Form = ({
 
   return (
     <form
-      className="bg-white rounded-lg shadow-lg px-8 pt-6 pb-8 mb-4 max-w-3xl mx-auto"
+      className="bg-white rounded-lg px-8 pt-6 pb-8 mb-4 max-w-3xl mx-auto"
       onSubmit={handleSubmit}
     >
       <div className="flex flex-wrap gap-4 mb-4">

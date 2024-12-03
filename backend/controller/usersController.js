@@ -62,7 +62,6 @@ export const UserLogin = async (req, res) => {
     const populatedUser = await User.findById(user._id).populate("items");
 
     res.cookie("xoxo", token, {
-      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       expires: new Date(Date.now() + 86400000),
     });
