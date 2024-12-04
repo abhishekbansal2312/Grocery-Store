@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useItemContext } from "../../services/GetItemsProvider";
+import { useState, useEffect } from "react";
 
 const Dashboard = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { items, setItems, loading, error } = useItemContext();
   const [statistics, setStatistics] = useState({
     totalItems: 0,
     activeItems: 0,
@@ -11,27 +10,17 @@ const Dashboard = () => {
     categories: {},
   });
 
-  const fetchItems = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("http://localhost:4100/api/items", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      setItems(data.items);
-      calculateStats(data.items);
-    } catch (error) {
-      console.error("Error fetching items:", error);
-      setError("Failed to fetch items. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchItemsAndCalculateStats = async () => {
+      try {
+        calculateStats(items);
+      } catch (err) {
+        console.error("Error fetching items:", err);
+      }
+    };
+
+    fetchItemsAndCalculateStats();
+  }, [items]);
 
   const calculateStats = (items) => {
     const totalItems = items.length;
@@ -46,17 +35,13 @@ const Dashboard = () => {
     setStatistics({ totalItems, activeItems, inactiveItems, categories });
   };
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg ">
+    <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg">
       <h1 className="text-2xl font-semibold text-gray-700 mb-4">Dashboard</h1>
       {loading ? (
         <p className="text-center text-gray-500">Loading items...</p>
       ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-center text-red-500">Error: {error}</p>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

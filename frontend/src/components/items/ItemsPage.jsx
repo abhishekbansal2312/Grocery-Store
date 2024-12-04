@@ -3,8 +3,11 @@ import Modal from "../Modal";
 import Form from "./Form";
 import SearchBar from "./SearchBar";
 import ItemsList from "./ItemsList";
+import { useItemContext } from "../../services/GetItemsProvider";
 
 export default function ItemsPage() {
+  const { items, setItems, filteredItems, setFilteredItems, loading, error } =
+    useItemContext();
   const [formFields, setFormFields] = useState({
     name: "",
     amount: "",
@@ -14,37 +17,7 @@ export default function ItemsPage() {
     isActive: false,
   });
   const [showModal, setShowModal] = useState(false);
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [editIndex, setEditIndex] = useState(-1);
-
-  const getAllItems = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("http://localhost:4100/api/items", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      setItems(data.items);
-      setFilteredItems(data.items);
-    } catch (error) {
-      console.error("Error fetching items:", error);
-      setError("Failed to fetch items. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAllItems();
-  }, []);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -142,8 +115,8 @@ export default function ItemsPage() {
 
   return (
     <div>
-      <div className="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-lg">
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg">
+        <div className="flex items-center justify-between mb-2">
           <button
             onClick={() => {
               setShowModal(true);
