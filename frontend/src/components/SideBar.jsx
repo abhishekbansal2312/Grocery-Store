@@ -16,13 +16,19 @@ const SideBar = ({ isCollapsed }) => {
           <FaBoxOpen size={20} />
           {!isCollapsed && <span className="ml-4 text-sm">Items</span>}
         </Link>
-
         <Link
           to="/billing"
           className="flex items-center w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition-all"
         >
           <FaFileInvoiceDollar size={20} />
-          {!isCollapsed && <span className="ml-4 text-sm">All Bills</span>}
+          {!isCollapsed && <span className="ml-4 text-sm">Billing</span>}
+        </Link>
+        <Link
+          to="/invoices"
+          className="flex items-center w-full px-4 py-3 rounded-lg hover:bg-gray-800 transition-all"
+        >
+          <FaFileInvoiceDollar size={20} />
+          {!isCollapsed && <span className="ml-4 text-sm">Invoices</span>}
         </Link>
 
         <Link

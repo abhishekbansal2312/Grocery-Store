@@ -87,24 +87,27 @@ export default function ItemsPage() {
   };
 
   const handleDelete = async (item) => {
-    try {
-      const id = item._id;
-      const response = await fetch(`http://localhost:4100/api/items/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        const id = item._id;
+        const response = await fetch(`http://localhost:4100/api/items/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
 
-      setItems((prevItems) => prevItems.filter((item) => item._id !== id));
-      setFilteredItems((prevFiltered) =>
-        prevFiltered.filter((item) => item._id !== id)
-      );
-    } catch (error) {
-      console.error("Error deleting item:", error);
+        setItems((prevItems) => prevItems.filter((item) => item._id !== id));
+        setFilteredItems((prevFiltered) =>
+          prevFiltered.filter((item) => item._id !== id)
+        );
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
     }
   };
+
   const handleSearch = (query) => {
     const lowerCaseQuery = query.toLowerCase();
     const filtered = items.filter((item) =>
@@ -155,7 +158,9 @@ export default function ItemsPage() {
 
         <div className="mt-4">
           {loading ? (
-            <p className="text-center text-gray-500">Loading items...</p>
+            <div className="flex justify-center items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+            </div>
           ) : error ? (
             <p className="text-center text-red-500">{error}</p>
           ) : (

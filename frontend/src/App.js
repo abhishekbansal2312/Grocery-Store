@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import SideBarProvider from "./context/SideBarProvider";
 import Header from "./components/Header";
 import GetItemsProvider from "./services/GetItemsProvider";
+import Billing from "./pages/Billing";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
               <Route path="/items" element={<Items />} />
               <Route path="/" element={<Form />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/billing" element={<Billing />} />
             </Routes>
           </SideBarProvider>
         </GetItemsProvider>
